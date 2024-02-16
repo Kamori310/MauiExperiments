@@ -3,7 +3,6 @@
 namespace NotesWithMaui;
 
 [Register("AppDelegate")]
-public class AppDelegate : MauiUIApplicationDelegate
-{
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+public class AppDelegate : MauiUIApplicationDelegate {
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }

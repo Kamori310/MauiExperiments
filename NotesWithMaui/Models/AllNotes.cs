@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 
 namespace NotesWithMaui.Models;
 
-internal class AllModels {
+internal class AllNotes {
     public ObservableCollection<Note> Notes { get; set; } = new ObservableCollection<Note>();
 
     public AllNotes() =>
@@ -13,6 +13,7 @@ internal class AllModels {
 
         // Get the folder where the notes are stored.
         string appDataPath = FileSystem.AppDataDirectory;
+        Console.Write(appDataPath);
 
         // Use Linq extensions to lead the *.notes.txt files.
         IEnumerable<Note> notes = Directory

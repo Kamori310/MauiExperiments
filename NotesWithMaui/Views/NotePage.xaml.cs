@@ -4,31 +4,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NotesWithMaui;
+namespace NotesWithMaui.Views;
 
+[QueryProperty(nameof(ItemId), nameof(ItemId))]
 public partial class NotePage : ContentPage {
-    private readonly string _fileName = Path.Combine(FileSystem.AppDataDirectory, "notes.txt");
+    public string ItemId {
+        set => LoadNote(value);
+    }
 
     public NotePage() {
         InitializeComponent();
 
-        if (File.Exists(_fileName)) {
-            TextEditor.Text = File.ReadAllText(_fileName);
-        }
+        string appDataPath = FileSystem.AppDataDirectory;
+        string randomFileName = $"{Path.GetRandomFileName()}.notes.txt";
+
+        LoadNote(Path.Combine(appDataPath, randomFileName));
     }
 
-    private void SaveButton_Clicked(object sender, EventArgs e) {
-        // Save the file.
-        File.WriteAllText(_fileName, TextEditor.Text);
-    }
+    private void LoadNote(string fileName) {
+        Models.Note noteModel = new Models.Note();
+        noteModel.Filename = fileName;
 
-
-    private void DeleteButton_Clicked(object sender, EventArgs e) {
-        // Delete the file.
-        if (File.Exists(_fileName)) {
-            File.Delete(_fileName);
+        if (File.Exists(fileName)) {
+            noteModel.Date = File.GetCreationTime(fileName);
+            noteModel.Text = File.ReadAllText(fileName);
         }
 
-        TextEditor.Text = string.Empty;
+        BindingContext = noteModel;
+    }
+
+    private async void SaveButton_Clicked(object sender, EventArgs e) {
+        if (BindingContext is Models.Note note) {
+            File.WriteAllText(note.Filename, TextEditor.Text);
+        }
+
+        await Shell.Current.GoToAsync("..");
+    }
+
+    private async void DeleteButton_Clicked(object sender, EventArgs e) {
+        if (BindingContext is Models.Note note) {
+            if (File.Exists(note.Filename)) {
+                File.Delete(note.Filename);
+            }
+        }
+
+        await Shell.Current.GoToAsync("..");
     }
 }
